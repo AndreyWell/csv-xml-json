@@ -1,0 +1,17 @@
+*.iml
+*.xml
+.idea/
+out/
+target/
+!*.txt
+!*.bin
+*.iws
+*.jar
+*.war
+*.ear
+!*.json
+*.csv
+!log.csv
+!pom.xml
+.gradle
+/build/
