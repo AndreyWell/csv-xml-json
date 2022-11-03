@@ -1,18 +1,51 @@
 package ru.netology;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
+import java.io.*;
+import java.util.*;
+
+import static com.google.gson.ToNumberPolicy.LAZILY_PARSED_NUMBER;
+
+@JsonPropertyOrder({"product", "prices", "sumProducts", "amount"})
 public class Basket implements Serializable {
     private List<String> products;
     private List<Integer> prices;
     private int[] basketSum;
+    @Expose
+    private String product;
+    @Expose
+    private int price;
+    @Expose
+    @SerializedName("sumProduct")
+    private int sumProducts;
+    @Expose
+    private int amount;
+    private Map<String, Object> integerMap;
+
+    public Basket(String product, int price, int sumProducts, int amount) {
+        this.product = product;
+        this.price = price;
+        this.sumProducts = sumProducts;
+        this.amount = amount;
+    }
 
     public Basket(List<String> products, List<Integer> prices) {
         this.products = products;
         this.prices = prices;
         this.basketSum = new int[products.size()];
+    }
+
+    public String getProduct() {
+        return product;
+    }
+
+    public int getPrice() {
+        return price;
     }
 
     public Basket() {
@@ -38,6 +71,10 @@ public class Basket implements Serializable {
         return basketSum;
     }
 
+    public int getSumProducts() {
+        return sumProducts;
+    }
+
     // Добавление в корзину amount штук продукта номер productNum
     public void addTo(int productNum, int amount) {
         basketSum[productNum] += amount;
@@ -47,7 +84,7 @@ public class Basket implements Serializable {
     public List<String> printCart() {
         int count = 0;
         List<String> printCart = new ArrayList<>();
-        int sumProducts = 0;
+        sumProducts = 0;
         for (int i = 0; i < basketSum.length; i++) {
             if (basketSum[i] == 0) {
                 continue;
@@ -74,7 +111,6 @@ public class Basket implements Serializable {
             if (printCart().size() == 1) {
                 System.out.println("Корзина пустая");
             }
-
             for (String b : printCart()) {
                 out.println(b);
             }
@@ -170,9 +206,67 @@ public class Basket implements Serializable {
         }
     }
 
+    // Сохранить корзину в JSON
+    public void basketInJson() throws IOException {
+        GsonBuilder builder = new GsonBuilder();
+        builder.excludeFieldsWithModifiers();
+        Gson gson = builder.setPrettyPrinting().create();
+        List<Integer> sum = new ArrayList<>();
+        List<Integer> amount = new ArrayList<>();
+        List<Basket> basketList = new ArrayList<>();
+        for (int i = 0; i < basketSum.length; i++) {
+            sum.add(i, (getPrices().get(i) * getBasketSum()[i]));
+        }
+        for (int i = 0; i < basketSum.length; i++) {
+            amount.add(i, getBasketSum()[i]);
+        }
+        try (FileWriter writer = new FileWriter("basket.json")) {
+            for (int i = 0; i < basketSum.length; i++) {
+                if (amount.get(i) == 0) {
+                    continue;
+                }
+                Basket basket = new Basket(getProducts().get(i), getPrices().get(i),
+                        sum.get(i), amount.get(i));
+                basketList.add(basket);
+            }
+            String s = gson.toJson(basketList);
+            writer.write(s);
+        }
+    }
+
+    // Загрузить корзину из JSON
+    public void basketFromJson(File jsonBasket) throws IOException {
+        if (jsonBasket.canRead()) {
+            try (Reader reader = new BufferedReader(new FileReader(jsonBasket))) {
+                GsonBuilder builder = new GsonBuilder();
+                builder.excludeFieldsWithModifiers();
+                Gson gson = builder.setObjectToNumberStrategy(LAZILY_PARSED_NUMBER).create();
+                List<Map<String, Object>> rebuildBasketList = gson.fromJson(reader, List.class);
+
+                int countCurrentBusket = 0;
+                for (int i = 0; i < basketSum.length; i++) {
+                    integerMap = rebuildBasketList.get(countCurrentBusket);
+                    if (!integerMap.containsValue(getProducts().get(i))) {
+                        continue;
+                    }
+
+                    Object amountObj = integerMap.get("amount");
+                    String s = amountObj.toString();
+                    int amount = Integer.parseInt(s);
+
+                    countCurrentBusket++;
+
+                    addTo(i, amount);
+                }
+            }
+        } else {
+            System.out.println("Корзина пустая");
+        }
+    }
+
     @Override
     public String toString() {
-        return "Basket{" +
+        return "ru.netology.Basket{" +
                 "products=" + products +
                 ", prices=" + prices +
                 '}';

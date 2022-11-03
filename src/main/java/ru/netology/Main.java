@@ -9,12 +9,17 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         File file = new File("basket.txt");
         File data = new File("data.bin");
+        File csv = new File("log.csv");
+        File json = new File("basket.json");
+        File json1 = new File("basket.json");
+        ClientLog addingLog = new ClientLog();
 
         Basket basket = new Basket(
                 Arrays.asList("Хлеб", "Яблоки", "Молоко", "Чай"),
                 Arrays.asList(100, 200, 300, 400));
 
-        basket.rebuildBasketFromFile(file);
+//        basket.rebuildBasketFromFile(file);
+        basket.basketFromJson(json);
 
         System.out.println("Список возможных продуктов для покупки:");
         for (int i = 0; i < basket.getProducts().size(); i++) {
@@ -36,6 +41,8 @@ public class Main {
 
             String input = scanner.nextLine();
             if (input.equals("end")) {
+                addingLog.exportAsCSV(csv);
+                basket.basketInJson();
                 break;
             }
 
@@ -54,7 +61,7 @@ public class Main {
                 productNum = Integer.parseInt(parts[0]) - 1;
                 amount = Integer.parseInt(parts[1]);
                 basket.addTo(productNum, amount);
-
+                addingLog.log(productNum, amount);
                 basket.saveTxt(file);
             }
 

@@ -1,0 +1,20 @@
+[
+  {
+    "product": "Яблоки",
+    "price": 200,
+    "sumProduct": 1400,
+    "amount": 7
+  },
+  {
+    "product": "Молоко",
+    "price": 300,
+    "sumProduct": 1500,
+    "amount": 5
+  },
+  {
+    "product": "Чай",
+    "price": 400,
+    "sumProduct": 4000,
+    "amount": 10
+  }
+]
