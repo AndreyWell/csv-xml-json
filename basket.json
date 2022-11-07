@@ -1,20 +1,26 @@
 [
   {
+    "product": "Хлеб",
+    "price": 100,
+    "sumProduct": 500,
+    "amount": 5
+  },
+  {
     "product": "Яблоки",
     "price": 200,
-    "sumProduct": 1400,
-    "amount": 7
+    "sumProduct": 800,
+    "amount": 4
   },
   {
     "product": "Молоко",
     "price": 300,
-    "sumProduct": 1500,
-    "amount": 5
+    "sumProduct": 2400,
+    "amount": 8
   },
   {
     "product": "Чай",
     "price": 400,
-    "sumProduct": 4000,
-    "amount": 10
+    "sumProduct": 3200,
+    "amount": 8
   }
 ]

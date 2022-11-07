@@ -30,6 +30,7 @@ public class ClientLog {
         return saveLog;
     }
 
+    // Сохранение операций
     public List<String[]> log(int productNum, int amount) throws IOException {
         String s1 = Integer.toString(productNum + 1);
         String s2 = Integer.toString(amount);

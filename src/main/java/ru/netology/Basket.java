@@ -207,7 +207,7 @@ public class Basket implements Serializable {
     }
 
     // Сохранить корзину в JSON
-    public void basketInJson() throws IOException {
+    public void basketInJson(File jsonBasket) throws IOException {
         GsonBuilder builder = new GsonBuilder();
         builder.excludeFieldsWithModifiers();
         Gson gson = builder.setPrettyPrinting().create();
@@ -220,7 +220,7 @@ public class Basket implements Serializable {
         for (int i = 0; i < basketSum.length; i++) {
             amount.add(i, getBasketSum()[i]);
         }
-        try (FileWriter writer = new FileWriter("basket.json")) {
+        try (FileWriter writer = new FileWriter(jsonBasket)) {
             for (int i = 0; i < basketSum.length; i++) {
                 if (amount.get(i) == 0) {
                     continue;
@@ -254,7 +254,9 @@ public class Basket implements Serializable {
                     String s = amountObj.toString();
                     int amount = Integer.parseInt(s);
 
-                    countCurrentBusket++;
+                    if ((countCurrentBusket + 1) < rebuildBasketList.size()) {
+                        countCurrentBusket++;
+                    }
 
                     addTo(i, amount);
                 }
